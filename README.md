@@ -1,13 +1,32 @@
-# YoutubeDiscordBot
-My little project for learning **Rust** lang.
-*YoutubeDiscordBot* is bot for ***discord*** on Rust that takes last uploaded ***youtube*** video of selected channel and pushes a message in selected discord channel when new video appears.
+## YoutubeDiscordBot
+A Rust-based Discord bot that automatically posts new YouTube videos to a specified Discord channel.
 
-### There is some bindings
+This project serves as a learning experience for Rust programming. The bot monitors a selected YouTube channel and sends a message to a designated Discord channel whenever a new video is uploaded.
 
-(in discord channel with bot included)
+### Features
 
->/set clips - sets actual channel to be **clip** channel
+Channel Selection: Configure the YouTube channel and Discord channel to monitor and post to.
+New Video Notification: Automatically posts a message with the new video's details to the Discord channel.
+## Usage
+### Configure config.toml:
 
->/!bot - does check last video of selected channel and sends it as a reply in a same discord channel
+* ```DISCORD_API_KEY```: Your **Discord bot** token.
 
-I started this project a little time ago and i have a lot of features to add in my mind. I'll try to implement it and make my project look good.
+* ```YOUTUBE_API_KEY```: Your **YouTube Data API key**.
+
+* ```YOUTUBE_CHANNEL```: The ID of the **YouTube channel** to monitor.
+
+**Run the bot: Start the bot application.**
+
+### Discord Commands:
+
+```/set clips```: Sets the **current channel** as the "clips" channel (for future feature implementation).
+```/!bot```: Checks for the latest video from the configured **YouTube channel** and posts it to the **chosen Discord channel**.
+Future Improvements
+I plan to expand the bot's functionality by:
+
+Supporting multiple YouTube channels.
+Implementing additional Discord commands for customization.
+Enhancing the notification message format.
+Exploring error handling and logging.
+***Note: Currently, the bot only supports a single YouTube channel. Multi-channel support is in development.***
