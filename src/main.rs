@@ -11,7 +11,7 @@ use serenity::prelude::*;
 use serenity::utils::MessageBuilder;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, Read, stdin};
-use std::{thread};
+use std::{fs, thread};
 use std::sync::mpsc::channel;
 use std::thread::sleep;
 use log::{error, info, Level, LevelFilter, trace};
@@ -91,16 +91,16 @@ impl EventHandler for Handler {
         let channel_id = ChannelId::new(std::fs::read_to_string("C:/Program Files/ytdcbot/data/target_channel.txt").unwrap().parse().unwrap());
         let message_content = "test message";
 
-        let mut input = String::new();
-        loop{
-            stdin().lock().read_line(&mut input).expect("failed reading line");
-            input = input.trim().to_string();
-            match input.as_str() {
-                "1" => check_for_new_video(ctx.clone(), channel_id).await.expect("Error calling check_for_new_video"),
-                "q" => break,
-                _ => {}
-            }
-        }
+        /*let mut input = String::new();
+        //         loop{
+        //             stdin().lock().read_line(&mut input).expect("failed reading line");
+        //             input = input.trim().to_string();
+        //             match input.as_str() {
+        //                 "1" => check_for_new_video(ctx.clone(), channel_id).await.expect("Error calling check_for_new_video"),
+        //                 "q" => break,
+        //                 _ => {}
+        //             }
+                 }*/
 
     }
 
@@ -129,14 +129,16 @@ async fn check_for_new_video(context: Context, channel_id: ChannelId) -> Result<
 
 async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
 
-    let youtube_key = use_config()?.get::<&str>("youtube_key")?;
+    let youtube_key = use_config()?.get::<String>("youtube_key")?;
 
     let client = reqwest::Client::new();
-    let url = format!("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCdKcHd14z3ej-EqtT5GdI1g&order=date&maxResults=1&key={:?}", youtube_key);
+    let url = format!("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId=UCdKcHd14z3ej-EqtT5GdI1g&order=date&maxResults=1&key={}", youtube_key);
 
     let resp = client.get(url).send().await?;
+
     let text = resp.text().await?;
 
+    println!("{:?}", text);
     let json_value: Value = from_str(&text)?;
     let video_id = json_value["items"][0]["id"]["videoId"].as_str().unwrap().to_string();
 
@@ -172,7 +174,7 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
 #[tokio::main]
 async fn main() -> Result<(), ConfigError>{
 
-    let token = use_config()?.get::<&str>("token")?;
+    let token = use_config()?.get::<String>("token")?;
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
