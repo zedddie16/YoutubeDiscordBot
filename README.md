@@ -3,7 +3,6 @@ A Rust-based Discord bot that automatically posts new YouTube videos to a specif
 
 This project serves as a learning experience for Rust programming. The bot monitors a selected YouTube channel and sends a message to a designated Discord channel whenever a new video is uploaded.
 
-
 ### Features
 
 Channel Selection: Configure the YouTube channel and Discord channel to monitor and post to.
@@ -31,3 +30,9 @@ Implementing additional Discord commands for customization.
 Enhancing the notification message format.
 Exploring error handling and logging.
 ***Note: Currently, the bot only supports a single YouTube channel. Multi-channel support is in development.***
+
+I started making this bot because I have a YouTube channel and a Discord server with many friends. I saw one of my friends uploading his new video to the "clips" channel, which gave me the idea to create my own bot to monitor my channel for new videos and automatically upload a message about it to the "clips" channel on my server.
+
+I could have kept it simple by not including features to change the target channel or YouTube channel, but I decided to make it more robust to improve my Rust programming skills.
+
+I don't expect many people to use this bot besides me and my friends, but I don't mind.
