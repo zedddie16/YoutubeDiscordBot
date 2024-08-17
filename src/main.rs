@@ -18,6 +18,7 @@ use serenity::all::{ChannelId, CommandInteraction};
 use time::Duration;
 use config::{Config, ConfigBuilder, ConfigError};
 use lazy_static::lazy_static;
+
 //setting up config as lazy_static
 lazy_static! {
     static ref CONFIG: Result<Config, ConfigError> = {
@@ -94,48 +95,7 @@ impl EventHandler for Handler {
             },
             _ => {}
         }
-        /*if msg.content == "/set clips" {
-        //             info!("/set clips message received");
-        //             let target_channel = msg.channel_id.to_string();
-        //             std::fs::write("C:/Program Files/ytdcbot/data/target_channel.txt", target_channel).expect("Cannot write target channel id into target_channel");
-        //         }
-        //         if msg.content == "/set channel" {
-        //             info!("new /set channel request");
-        //             let channel = msg.content;
-        //             fs::write("channel.txt", channel).expect("failed writting channel.txt");
-        //         }
-        //         if msg.content == "!bot" {
-        //             info!("!bot message received");
-        //             let channel = match msg.channel_id.to_channel(&context).await {
-        //                 Ok(channel) => channel,
-        //                 Err(why) => {
-        //                     error!("Error getting channel: {why:?}");
-        //                     return;
-        //                 },
-        //             };
-        //
-        //
-        //             let video_id = match fetch_latest_video_id().await {
-        //                 Ok(id) => id,
-        //                 Err(err) => {
-        //                     error!("Error fetching video ID: {}", err);
-        //                     return;
-        //                 },
-        //             };
-        //
-        //             let response = MessageBuilder::new()
-        //                 .push("User ")
-        //                 .push_bold_safe(&msg.author.name)
-        //                 .push(" latest video: https://www.youtube.com/watch?v=")
-        //                 .push(video_id)
-        //                 .mention(&channel)
-        //                 .push(" channel")
-        //                 .build();
-        //             info!("!bot command responded");
-        //             if let Err(why) = msg.channel_id.say(&context.http, &response).await {
-        //                 error!("Error sending message: {why:?}");
-        //             }
-                }*/
+
     }
 
     async fn ready(&self, ctx: Context, ready: Ready) {
@@ -173,11 +133,39 @@ async fn check_for_new_video(context: Context, channel_id: ChannelId) -> Result<
             send_message(context.clone(), channel_id, &message_content).await.expect("Couldn't send message");
             info!("New video message send");
         } else {
-            trace!("No new video, sleep for 1 hour");
+            info!("No new video, sleep for 1 hour");
             //in case new_id is empty it does sleep for 1 hour (for debug it may be less)
             tokio::time::sleep(std::time::Duration::from_secs(30)).await;
         }
     }
+}
+async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
+    //initializing an old id var
+    let mut old_id = String::new();
+    //does open vid.txt file and reads its content to old_id
+    match File::open("C:/Program Files/ytdcbot/data/vid_id.txt") {
+        Ok(mut file) => {
+            file.read_to_string(&mut old_id).unwrap();
+        },
+        Err(err) => {
+            error!("File vid_id.txt not found, creating a new one");
+            std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", "").unwrap();
+        }
+    }
+    //creates id variable containing videoId of last video of channel
+    let id = fetch_latest_video_id().await?;
+    info!("fetched id is {}", id);
+    //compares old and new id
+    if old_id != id{
+        trace!("new video id founded:{}, old id: {}", id, old_id);
+        //in case old id and id are not same it write vid_id.txt with new id
+        std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
+        Ok(id)
+    }else {
+        info!("id = old_id");
+        Ok("".parse().unwrap())
+    }
+
 }
 //fetches last video id of YouTube channel
 async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
@@ -208,33 +196,7 @@ async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
     Ok(video_id)
 }
 //Checks is new video uploaded
-async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
-    //initializing an old id var
-    let mut old_id = String::new();
-    //does open vid.txt file and reads its content to old_id
-    match File::open("C:/Program Files/ytdcbot/data/vid_id.txt") {
-        Ok(mut file) => {
-            file.read_to_string(&mut old_id).unwrap();
-        },
-        Err(err) => {
-            error!("File vid_id.txt not found, creating a new one");
-            std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", "").unwrap();
-        }
-    }
-    //creates id variable containing videoId of last video of channel
-    let id = fetch_latest_video_id().await?;
-    trace!("new id is {}", id);
-    //compares old and new id
-    if old_id != id{
-        trace!("new video id founded:{}, old id: {}", id, old_id);
-        //in case old id and id are not same it write vid_id.txt with new id
-        std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
-        Ok(id)
-    }else {
-        Ok("".parse().unwrap())
-    }
 
-}
 
 //configuring bot
 #[tokio::main]
