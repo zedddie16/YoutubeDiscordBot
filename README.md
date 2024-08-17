@@ -31,8 +31,20 @@ Enhancing the notification message format.
 Exploring error handling and logging.
 ***Note: Currently, the bot only supports a single YouTube channel. Multi-channel support is in development.***
 
-I started making this bot because I have a YouTube channel and a Discord server with many friends. I saw one of my friends uploading his new video to the "clips" channel, which gave me the idea to create my own bot to monitor my channel for new videos and automatically upload a message about it to the "clips" channel on my server.
+### Why discord bot
+I saw one of my friends uploading his new video to the "clips" channel,
+which gave me the idea to create my own bot to monitor my channel
+for new videos and automatically upload a message about it to the "clips" channel on my server.
 
-I could have kept it simple by not including features to change the target channel or YouTube channel, but I decided to make it more robust to improve my Rust programming skills.
+I could have kept it simple by not including features to change the target channel or YouTube channel,
+but I decided to make it more robust to improve my Rust programming skills.
 
 I don't expect many people to use this bot besides me and my friends, but I don't mind.
+
+
+
+![anime-katana](https://github.com/user-attachments/assets/8c116ace-48d8-4cf5-86bb-38e42acf0e86)
+
+
+
+
