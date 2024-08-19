@@ -18,14 +18,19 @@ use serenity::all::{ChannelId, CommandInteraction};
 use time::Duration;
 use config::{Config, ConfigBuilder, ConfigError};
 use lazy_static::lazy_static;
+use serde::Serialize;
 
+#[derive(Serialize, Debug)]
+struct ChannelsList {
+    youtube_channel: String,
+    target_channel_id: u32,
+}
 //setting up config as lazy_static
 lazy_static! {
     static ref CONFIG: Result<Config, ConfigError> = {
             let mut builder: Config = Config::builder()
                 .add_source(config::File::with_name("src/config.toml"))
-                .build()
-                .unwrap();
+                .build()?;
             Ok(builder)
     };
 }
@@ -125,6 +130,7 @@ impl EventHandler for Handler {
 
     async fn ready(&self, ctx: Context, ready: Ready) {
 
+        //starting env_logger
         Builder::from_default_env().target(Target::Stderr).init();
         info!("{} is connected!", ready.user.name);
 
