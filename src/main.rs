@@ -9,7 +9,7 @@ use serenity::prelude::*;
 use serenity::utils::MessageBuilder;
 use std::fs::{File, OpenOptions};
 use std::io::{BufRead, Read, stdin};
-use std::{thread};
+use std::{fs, thread};
 use std::sync::mpsc::channel;
 use std::thread::sleep;
 use log::{error, info, Level, LevelFilter, trace};
@@ -18,12 +18,13 @@ use serenity::all::{ChannelId, CommandInteraction};
 use time::Duration;
 use config::{Config, ConfigBuilder, ConfigError};
 use lazy_static::lazy_static;
+use serenity::all::MultipartUpload::File;
 
 //setting up config as lazy_static
 lazy_static! {
     static ref CONFIG: Result<Config, ConfigError> = {
             let mut builder: Config = Config::builder()
-                .add_source(config::File::with_name("C:/Program Files/ytdcbot/data/config.toml"))
+                .add_source(config::File::with_name("src/config.toml"))
                 .build()
                 .unwrap();
             Ok(builder)
@@ -51,22 +52,23 @@ impl EventHandler for Handler {
     async fn message(&self, context: Context, msg: Message) {
         info!("message received");
         match msg.content.as_str() {
-            //sets a channel where was used as a target channel (look what target channel is in README.md)
+            //sets a current channel as a target channel (look what target channel is in README.md)
             "/set clips" => {
                 info!("/set clips message received");
-                //responses to /set clips with setting up clips-channel
+
                 let target_channel = msg.channel_id.to_string();
-                //response build
-                let response: String = MessageBuilder::new()
+
+                //responses to /set clips
+                let mut response: String = MessageBuilder::new()
                     .push("setting up clips-channel...")
                     .build();
-                //saying a message with response contains into channel_id channel
+                //saying a massage
                 msg.channel_id.say(&context.http, &response).await.expect("Message sending failed");
-                match std::fs::write("C:/Program Files/ytdcbot/data/target_channel.txt", target_channel){
+                match std::fs::write("target_channel.txt", target_channel){
                     Ok(()) => {
-                        let response = MessageBuilder::new().push("target-channel set up successful");
+                        response = MessageBuilder::new().push("target-channel set up successful").build();
                     }
-                    Err(()) => {
+                    Err(..) => {
                         let response = MessageBuilder::new().push_bold("target-channel set up failed").build();
                     }
                 }
@@ -127,7 +129,21 @@ impl EventHandler for Handler {
         Builder::from_default_env().target(Target::Stderr).init();
         info!("{} is connected!", ready.user.name);
 
-        let channel_id = ChannelId::new(std::fs::read_to_string("C:/Program Files/ytdcbot/data/target_channel.txt").unwrap().parse().unwrap());
+
+
+        let mut holder = String::new();
+        match File::open("target_channel.txt") {
+            Ok(mut file) => {
+                file.read_to_string(&mut holder).unwrap();
+            },
+            Err(_err) => {
+                error!("File target_channel.txt not found, creating a new one");
+                std::fs::write("target_channel.txt", "").unwrap();
+            }
+        }
+        let channel_id = ChannelId::new(holder.parse().unwrap());
+
+        //let channel_id = ChannelId::new(std::fs::read_to_string("target_channel.txt").unwrap().parse().unwrap());
         let message_content = "test message";
 
         check_for_new_video(ctx, channel_id).await.expect("failed to start check_for_new_video");
@@ -167,13 +183,13 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
     //initializing an old id var
     let mut old_id = String::new();
     //does open vid.txt file and reads its content to old_id
-    match File::open("C:/Program Files/ytdcbot/data/vid_id.txt") {
+    match File::open("vid_id.txt") {
         Ok(mut file) => {
             file.read_to_string(&mut old_id).unwrap();
         },
         Err(err) => {
             error!("File vid_id.txt not found, creating a new one");
-            std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", "").unwrap();
+            std::fs::write("vid_id.txt", "").unwrap();
         }
     }
     //creates id variable containing videoId of last video of channel
@@ -183,7 +199,7 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
     if old_id != id{
         trace!("new video id founded:{}, old id: {}", id, old_id);
         //in case old id and id are not same it write vid_id.txt with new id
-        std::fs::write("C:/Program Files/ytdcbot/data/vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
+        std::fs::write("vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
         Ok(id)
     }else {
         info!("id = old_id");
@@ -211,7 +227,7 @@ async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
 
     //takes a json as a String answer of YouTube API
     let text = resp.text().await?;
-
+    //println!("{text}");
     //does parse json to get videoId (Id of last video)
     let json_value: Value = from_str(&text)?;
     let video_id = json_value["items"][0]["id"]["videoId"].as_str().unwrap().to_string();
