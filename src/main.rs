@@ -18,7 +18,6 @@ use serenity::all::{ChannelId, CommandInteraction};
 use time::Duration;
 use config::{Config, ConfigBuilder, ConfigError};
 use lazy_static::lazy_static;
-use serenity::all::MultipartUpload::File;
 
 //setting up config as lazy_static
 lazy_static! {
