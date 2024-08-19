@@ -35,6 +35,14 @@ fn use_config() -> Result<Config, ConfigError>{
     Ok(config)
 }
 
+//          /\_____/\
+//         /  o   o  \
+//        ( ==  ^  == )
+//         )         (
+//        (  \     /  )
+//         \  \   /  /
+//          `-    -`
+
 struct Handler;
 
 #[async_trait]
@@ -46,14 +54,30 @@ impl EventHandler for Handler {
             //sets a channel where was used as a target channel (look what target channel is in README.md)
             "/set clips" => {
                 info!("/set clips message received");
+                //responses to /set clips with setting up clips-channel
                 let target_channel = msg.channel_id.to_string();
-                std::fs::write("C:/Program Files/ytdcbot/data/target_channel.txt", target_channel).expect("Cannot write target channel id into target_channel");
+                //response build
+                let response: String = MessageBuilder::new()
+                    .push("setting up clips-channel...")
+                    .build();
+                //saying a message with response contains into channel_id channel
+                msg.channel_id.say(&context.http, &response).await.expect("Message sending failed");
+                match std::fs::write("C:/Program Files/ytdcbot/data/target_channel.txt", target_channel){
+                    Ok(()) => {
+                        let response = MessageBuilder::new().push("target-channel set up successful");
+                    }
+                    Err(()) => {
+                        let response = MessageBuilder::new().push_bold("target-channel set up failed").build();
+                    }
+                }
+                msg.channel_id.say(&context.http, &response).await.expect("Message sending failed");
+
             },
             //unimplemented feature (do not use)
             "/set channel" => {
                 info!("new /set channel request");
                 let channel = msg.content;
-                std::fs::write("channel.txt", channel).expect("failed writting channel.txt");
+                std::fs::write("channel.txt", channel).expect("failed writing channel.txt");
             },
             /*
             Asks a fetch_latest_video_id
