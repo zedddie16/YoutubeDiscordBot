@@ -20,7 +20,6 @@ use config::{Config, ConfigBuilder, ConfigError};
 use lazy_static::lazy_static;
 use serde::Serialize;
 
-#[derive(Serialize, Debug)]
 struct ChannelsList {
     youtube_channel: String,
     target_channel_id: u32,
@@ -134,6 +133,7 @@ impl EventHandler for Handler {
         Builder::from_default_env().target(Target::Stderr).init();
         info!("{} is connected!", ready.user.name);
 
+        //work with json of channels
 
 
         let mut holder = String::new();
