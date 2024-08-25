@@ -178,9 +178,11 @@ async fn check_for_new_video(context: Context, channel_id: ChannelId) -> Result<
             send_message(context.clone(), channel_id, &message_content).await.expect("Couldn't send message");
             info!("New video message send");
         } else {
-            info!("No new video, sleep for 1 hour");
+            let time = 30;
+            info!("No new video, sleep for {} seconds", time);
             //in case new_id is empty it does sleep for 1 hour (for debug it may be less)
-            tokio::time::sleep(std::time::Duration::from_secs(30)).await;
+
+            tokio::time::sleep(std::time::Duration::from_secs(time)).await;
         }
     }
 }
