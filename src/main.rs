@@ -1,3 +1,4 @@
+mod r#fetch;
 
 use std::error::Error;
 use serde_json::{Value, from_str};
@@ -24,8 +25,7 @@ lazy_static! {
     static ref CONFIG: Result<Config, ConfigError> = {
             let mut builder: Config = Config::builder()
                 .add_source(config::File::with_name("src/config.toml"))
-                .build()
-                .unwrap();
+                .build()?;
             Ok(builder)
     };
 }
@@ -97,7 +97,7 @@ impl EventHandler for Handler {
                 };
 
 
-                let video_id = match fetch_latest_video_id().await {
+                let video_id = match fetch::fetch_latest_video_id().await {
                     Ok(id) => id,
                     Err(err) => {
                         error!("Error fetching video ID: {}", err);
@@ -192,7 +192,7 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
         }
     }
     //creates id variable containing videoId of last video of channel
-    let id = fetch_latest_video_id().await?;
+    let id = fetch::fetch_latest_video_id().await?;
     info!("fetched id is {}", id);
     //compares old and new id
     if old_id != id{
@@ -207,33 +207,7 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>>{
 
 }
 //fetches last video id of YouTube channel
-async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
 
-    //loading keys from Config
-    let youtube_key = use_config()?.get::<String>("youtube_key")?;
-    let channel = use_config()?.get::<String>("youtube_channel")?;
-
-    //configuring client and url for request
-    //creating new instance of request::Client
-    let client = reqwest::Client::new();
-
-    /*Url takes CHANNEL and YOUTUBE_KEY, and does a request to YouTube API where part = snippet, channelId is CHANNEL_ID
-    it does order videos of CHANNEL_ID YouTube channel by date and as Results 1 it shows LAST video of YouTube channel*/
-    let url = format!("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={}&order=date&maxResults=1&key={}",channel, youtube_key);
-
-    //does request to a YouTube API
-    let resp = client.get(url).send().await?;
-
-    //takes a json as a String answer of YouTube API
-    let text = resp.text().await?;
-    //println!("{text}");
-    //does parse json to get videoId (Id of last video)
-    let json_value: Value = from_str(&text)?;
-    let video_id = json_value["items"][0]["id"]["videoId"].as_str().unwrap().to_string();
-
-    info!("lastest video id fetched");
-    Ok(video_id)
-}
 //Checks is new video uploaded
 
 
