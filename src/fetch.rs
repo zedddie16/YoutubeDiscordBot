@@ -1,10 +1,9 @@
-use std::error::Error;
+use crate::use_config;
 use log::info;
 use serde_json::{from_str, Value};
-use crate::use_config;
+use std::error::Error;
 
 pub(crate) async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
-
     //loading keys from Config
     let youtube_key = use_config()?.get::<String>("youtube_key")?;
     let channel = use_config()?.get::<String>("youtube_channel")?;
@@ -25,7 +24,10 @@ pub(crate) async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
     //println!("{text}");
     //does parse json to get videoId (Id of last video)
     let json_value: Value = from_str(&text)?;
-    let video_id = json_value["items"][0]["id"]["videoId"].as_str().unwrap().to_string();
+    let video_id = json_value["items"][0]["id"]["videoId"]
+        .as_str()
+        .unwrap()
+        .to_string();
 
     info!("lastest video id fetched");
     Ok(video_id)
