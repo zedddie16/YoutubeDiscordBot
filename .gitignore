@@ -1,2 +1,5 @@
 /target
 /src/config.toml
+.idea
+target_channel.txt
+vid_id.txt

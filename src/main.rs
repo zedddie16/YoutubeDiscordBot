@@ -23,7 +23,7 @@ use time::Duration;
 //setting up config as lazy_static
 lazy_static! {
     static ref CONFIG: Result<Config, ConfigError> = {
-        let mut builder: Config = Config::builder()
+        let builder: Config = Config::builder()
             .add_source(config::File::with_name("src/config.toml"))
             .build()?;
         Ok(builder)
@@ -66,14 +66,14 @@ impl EventHandler for Handler {
                     .say(&context.http, &response)
                     .await
                     .expect("Message sending failed");
-                match std::fs::write("target_channel.txt", target_channel) {
+                match fs::write("target_channel.txt", target_channel) {
                     Ok(()) => {
                         response = MessageBuilder::new()
                             .push("target-channel set up successful")
                             .build();
                     }
                     Err(..) => {
-                        let response = MessageBuilder::new()
+                        let _response = MessageBuilder::new()
                             .push_bold("target-channel set up failed")
                             .build();
                     }
@@ -87,7 +87,7 @@ impl EventHandler for Handler {
             "/set channel" => {
                 info!("new /set channel request");
                 let channel = msg.content;
-                std::fs::write("channel.txt", channel).expect("failed writing channel.txt");
+                fs::write("channel.txt", channel).expect("failed writing channel.txt");
             }
             /*
             Asks a fetch_latest_video_id
@@ -95,7 +95,7 @@ impl EventHandler for Handler {
              and answer to a !bot initiator with a link to last video)
 
              */
-            "!botыЭ" => {
+            "!botЭ" => {
                 info!("!bot message received");
                 let channel = match msg.channel_id.to_channel(&context).await {
                     Ok(channel) => channel,
@@ -141,13 +141,13 @@ impl EventHandler for Handler {
             }
             Err(_err) => {
                 error!("File target_channel.txt not found, creating a new one");
-                std::fs::write("target_channel.txt", "").unwrap();
+                fs::write("target_channel.txt", "").unwrap();
             }
         }
         let channel_id = ChannelId::new(holder.parse().unwrap());
 
         //let channel_id = ChannelId::new(std::fs::read_to_string("target_channel.txt").unwrap().parse().unwrap());
-        let message_content = "test message";
+        let _message_content = "test message";
 
         check_for_new_video(ctx, channel_id)
             .await
@@ -171,7 +171,7 @@ async fn check_for_new_video(
     loop {
         trace!("checking for new video");
         //define new_id with is_new_video_uploaded() function which returns id
-        let new_id = is_new_video_uploaded().await.unwrap();
+        let new_id = is_new_video_uploaded().await?;
         if new_id != "".to_string() {
             //in case new_id is not empty (that means there is new video uploaded)
             //creates message content with MessageBuilder
@@ -200,9 +200,9 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>> {
         Ok(mut file) => {
             file.read_to_string(&mut old_id).unwrap();
         }
-        Err(err) => {
+        Err(_err) => {
             error!("File vid_id.txt not found, creating a new one");
-            std::fs::write("vid_id.txt", "").unwrap();
+            fs::write("vid_id.txt", "").unwrap();
         }
     }
     //creates id variable containing videoId of last video of channel
@@ -212,7 +212,7 @@ async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>> {
     if old_id != id {
         trace!("new video id founded:{}, old id: {}", id, old_id);
         //in case old id and id are not same it write vid_id.txt with new id
-        std::fs::write("vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
+        fs::write("vid_id.txt", id.clone()).expect("Error while writing new id to vid_id.txt");
         Ok(id)
     } else {
         info!("id = old_id");

@@ -29,6 +29,6 @@ pub(crate) async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
         .unwrap()
         .to_string();
 
-    info!("lastest video id fetched");
+    info!("last video id fetched");
     Ok(video_id)
 }
