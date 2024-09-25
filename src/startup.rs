@@ -1,24 +1,20 @@
-use std::fs;
-use std::fs::File;
-use std::io::Read;
+use crate::base::{check_for_new_video, fetch, is_new_video_uploaded, send_message, use_config};
 use config::{Config, ConfigError};
 use env_logger::{Builder, Target};
 use lazy_static::lazy_static;
 use log::{error, info};
-use serenity::all::{ChannelId, Context, EventHandler, GatewayIntents, Message, MessageBuilder, Ready};
-use serenity::{async_trait, Client};
-use crate::base::{
-    send_message,
-    check_for_new_video,
-    fetch,
-    is_new_video_uploaded,
-    use_config
+use serenity::all::{
+    ChannelId, Context, EventHandler, GatewayIntents, Message, MessageBuilder, Ready,
 };
+use serenity::{async_trait, Client};
+use std::fs;
+use std::fs::File;
+use std::io::Read;
 
 pub struct Handler;
 
 lazy_static! {
-   pub static ref CONFIG: Result<Config, ConfigError> = {
+    pub static ref CONFIG: Result<Config, ConfigError> = {
         let builder: Config = Config::builder()
             .add_source(config::File::with_name("src/config.toml"))
             .build()?;
@@ -136,9 +132,6 @@ impl EventHandler for Handler {
     }
 }
 pub async fn run() -> Result<(), ConfigError> {
-
-    
-    
     //takes token from Config
     let token = use_config::use_config()?.get::<String>("token")?;
 

@@ -1,8 +1,7 @@
-
+use crate::base::use_config::use_config;
 use log::info;
 use serde_json::{from_str, Value};
 use std::error::Error;
-use crate::base::use_config::use_config;
 
 pub async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
     //loading keys from Config

@@ -1,6 +1,6 @@
-use std::error::Error;
 use log::{info, trace};
 use serenity::all::{ChannelId, Context, MessageBuilder};
+use std::error::Error;
 
 use crate::base::is_new_video_uploaded::is_new_video_uploaded;
 use crate::base::send_message::send_message;

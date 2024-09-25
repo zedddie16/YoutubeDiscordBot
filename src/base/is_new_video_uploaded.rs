@@ -1,9 +1,9 @@
+use crate::base::fetch;
+use log::{error, info, trace};
 use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
-use log::{error, info, trace};
-use crate::base::fetch;
 
 pub async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>> {
     //initializing an old id var
