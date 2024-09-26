@@ -1,4 +1,4 @@
-use crate::base::{check_for_new_video, fetch, is_new_video_uploaded, send_message, use_config};
+use crate::base::{check_for_new_video, fetch, use_config};
 use config::{Config, ConfigError};
 use env_logger::{Builder, Target};
 use lazy_static::lazy_static;
@@ -24,21 +24,21 @@ lazy_static! {
 
 #[async_trait]
 impl EventHandler for Handler {
-    //a block for handling messages received by bot
+    //handling messages received by bot
     async fn message(&self, context: Context, msg: Message) {
         info!("message received");
         match msg.content.as_str() {
-            //sets a current channel as a target channel (look what target channel is in README.md)
+            //sets current channel as a target channel
             "/set clips" => {
                 info!("/set clips message received");
 
                 let target_channel = msg.channel_id.to_string();
 
-                //responses to /set clips
+                //response to /set clips
                 let mut response: String = MessageBuilder::new()
                     .push("setting up clips-channel...")
                     .build();
-                //saying a massage
+                //saying massage
                 msg.channel_id
                     .say(&context.http, &response)
                     .await
@@ -60,19 +60,14 @@ impl EventHandler for Handler {
                     .await
                     .expect("Message sending failed");
             }
-            //unimplemented feature (do not use)
+            //unimplemented feature (does nothing for now)
             "/set channel" => {
                 info!("new /set channel request");
                 let channel = msg.content;
                 fs::write("channel.txt", channel).expect("failed writing channel.txt");
             }
-            /*
-            Asks a fetch_latest_video_id
-            (request to google YouTubeV3 API for last video id of user channel[setup user channel in config.toml]
-             and answer to a !bot initiator with a link to last video)
-
-             */
-            "!botЭ" => {
+            //return last video as answer in same channel
+            "!bot" => {
                 info!("!bot message received");
                 let channel = match msg.channel_id.to_channel(&context).await {
                     Ok(channel) => channel,
@@ -123,7 +118,6 @@ impl EventHandler for Handler {
         }
         let channel_id = ChannelId::new(holder.parse().unwrap());
 
-        //let channel_id = ChannelId::new(std::fs::read_to_string("target_channel.txt").unwrap().parse().unwrap());
         let _message_content = "test message";
 
         check_for_new_video::check_for_new_video(ctx, channel_id)
@@ -131,6 +125,7 @@ impl EventHandler for Handler {
             .expect("failed to start check_for_new_video");
     }
 }
+//run the bot
 pub async fn run() -> Result<(), ConfigError> {
     //takes token from Config
     let token = use_config::use_config()?.get::<String>("token")?;
