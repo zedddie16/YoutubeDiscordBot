@@ -1,9 +1,9 @@
-use crate::use_config;
+use crate::base::use_config::use_config;
 use log::info;
 use serde_json::{from_str, Value};
 use std::error::Error;
 
-pub(crate) async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
+pub async fn fetch_latest_video_id() -> Result<String, Box<dyn Error>> {
     //loading keys from Config
     let youtube_key = use_config()?.get::<String>("youtube_key")?;
     let channel = use_config()?.get::<String>("youtube_channel")?;
