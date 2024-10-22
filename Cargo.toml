@@ -4,7 +4,12 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-serenity = { version = "0.12.2",default-features = false, features = ["client", "gateway", "rustls_backend", "model"] }
+serenity = { version = "0.12.2", default-features = false, features = [
+    "client",
+    "gateway",
+    "rustls_backend",
+    "model",
+] }
 tokio = { version = "1.0", features = ["macros", "rt-multi-thread", "time"] }
 reqwest = { version = "0.12.8", features = ["blocking", "json"] }
 serde = "1.0.203"
@@ -15,5 +20,3 @@ simplelog = { version = "0.12.2", features = ["ansi_term"] }
 time = "0.3.36"
 config = "0.14.0"
 lazy_static = "1.5.0"
-
-configuration = "0.7.2"

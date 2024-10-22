@@ -1,6 +1,8 @@
 use config::{Config, ConfigError};
 
-pub(crate) fn use_config() -> Result<Config, ConfigError> {
+use crate::startup::YouTubeDiscordBotSettings;
+
+pub(crate) fn use_config() -> Result<YouTubeDiscordBotSettings, ConfigError> {
     let config = crate::startup::CONFIG.as_ref().map(|c| c.clone()).unwrap();
-    Ok(config)
+    config.try_deserialize::<YouTubeDiscordBotSettings>()
 }

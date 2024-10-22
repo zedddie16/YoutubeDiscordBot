@@ -7,7 +7,6 @@ name = "YoutubeDiscordBot"
 version = "0.1.0"
 dependencies = [
  "config",
- "configuration",
  "env_logger",
  "lazy_static",
  "log",
@@ -237,18 +236,8 @@ dependencies = [
  "rust-ini",
  "serde",
  "serde_json",
- "toml 0.8.19",
+ "toml",
  "yaml-rust",
-]
-
-[[package]]
-name = "configuration"
-version = "0.7.2"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "cb548015d17fac0f89c8f51d3d2c315f3e8a2a6c53148f6aa38d464c254658e3"
-dependencies = [
- "options",
- "toml 0.1.30",
 ]
 
 [[package]]
@@ -1040,12 +1029,6 @@ dependencies = [
  "pkg-config",
  "vcpkg",
 ]
-
-[[package]]
-name = "options"
-version = "0.5.3"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "011a039a066746d788a814f9d597d09f2230a77677eddf9dfcbf37389e667e41"
 
 [[package]]
 name = "ordered-multimap"
@@ -1935,12 +1918,6 @@ dependencies = [
  "pin-project-lite",
  "tokio",
 ]
-
-[[package]]
-name = "toml"
-version = "0.1.30"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0590d72182e50e879c4da3b11c6488dae18fccb1ae0c7a3eda18e16795844796"
 
 [[package]]
 name = "toml"
