@@ -146,7 +146,7 @@ impl EventHandler for Handler {
 //run the bot
 pub async fn run() -> Result<(), ConfigError> {
     //takes token from Config
-    let token = std::env::var("token").expect("Failed to read environment");
+    let token = std::env::var("DISCORD_API_KEY").expect("Failed to read environment");
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
