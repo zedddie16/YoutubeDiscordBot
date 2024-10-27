@@ -10,10 +10,10 @@ use serenity::{async_trait, Client};
 use std::fs;
 use std::fs::File;
 use std::io::Read;
-use tokio::sync::Mutex;
-//use crate::configuration::get_configuration;
 
 pub struct Handler;
+
+#[derive(Deserialize)]
 
 lazy_static! {
     pub static ref CONFIG: Result<Config, ConfigError> = {
@@ -24,24 +24,11 @@ lazy_static! {
     };
 }
 
-lazy_static! {
-    pub static ref SETTINGS: Mutex<YouTubeDiscordBotSettings> = Mutex::new({
-        let config = use_config::use_config().expect("Parsing YouTubeDiscordBotSettings failed.");
-        config
-    });
-}
-#[derive(serde::Deserialize)]
-pub struct YouTubeDiscordBotSettings {
-    pub youtube_key: &'static str,
-    pub channel: &'static str,
-}
-
 #[async_trait]
 impl EventHandler for Handler {
     //handling messages received by bot
     async fn message(&self, context: Context, msg: Message) {
         info!("message received");
-        let settings = SETTINGS.lock().unwrap();
         match msg.content.as_str() {
             //sets current channel as a target channel
             "/set clips" => {
@@ -92,7 +79,7 @@ impl EventHandler for Handler {
                     }
                 };
 
-                let video_id = match fetch::fetch_latest_video_id(&*settings).await {
+                let video_id = match fetch::fetch_latest_video_id().await {
                     Ok(id) => id,
                     Err(err) => {
                         error!("Error fetching video ID: {}", err);
@@ -131,9 +118,6 @@ impl EventHandler for Handler {
                 fs::write("target_channel.txt", "").unwrap();
             }
         }
-        let settings: YouTubeDiscordBotSettings =
-            use_config::use_config().expect("Parsing YouTubeDiscordBotSettings failed.");
-
         let channel_id = ChannelId::new(holder.parse().unwrap());
 
         let _message_content = "test message";
@@ -146,7 +130,7 @@ impl EventHandler for Handler {
 //run the bot
 pub async fn run() -> Result<(), ConfigError> {
     //takes token from Config
-    let token = std::env::var("DISCORD_API_KEY").expect("Failed to read environment");
+    let token = use_config::use_config()?.get::<String>("token")?;
 
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
