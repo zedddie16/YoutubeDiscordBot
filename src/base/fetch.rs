@@ -1,6 +1,7 @@
 use crate::startup::YouTubeDiscordBotSettings;
 use log::info;
-use serde_json::{from_str, Value};
+use serde_json::Value;
+use serde_yaml::from_str;
 use std::error::Error;
 
 // #fetch last user's YouTube video

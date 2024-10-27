@@ -3,6 +3,8 @@ use config::{Config, ConfigError};
 use env_logger::{Builder, Target};
 use lazy_static::lazy_static;
 use log::{error, info};
+use serde::Deserialize;
+use serde_yaml;
 use serenity::all::{
     ChannelId, Context, EventHandler, GatewayIntents, Message, MessageBuilder, Ready,
 };
@@ -14,13 +16,15 @@ use std::io::Read;
 pub struct Handler;
 
 #[derive(Deserialize)]
-
+pub struct YoutubeDiscordBotSettings {
+    pub api: String,
+    pub channel: String,
+}
 lazy_static! {
-    pub static ref CONFIG: Result<Config, ConfigError> = {
-        let builder: Config = Config::builder()
-            .add_source(config::File::with_name("src/config.toml"))
-            .build()?;
-        Ok(builder)
+    pub static ref CONFIG: YoutubeDiscordBotSettings = {
+        let config_data = fs::read_to_string("config.yaml").expect("Failed to read config.yaml");
+        serde_yaml::from_str(&config_data).expect("Failed to parse config data");
+        todo!("Dodelai")
     };
 }
 
