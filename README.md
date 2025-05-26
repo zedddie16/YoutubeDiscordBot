@@ -1,7 +1,7 @@
 as currently at refactor branch i want to:
-[ ] - implement multiple youtube channels
-[ ] - integrate duckdb
-[ ] - fix my garbage code
+ 1. [ ] - implement multiple youtube channels
+ 2. [ ] - integrate duckdb
+ 3. [ ] - fix my garbage code
 
 
 ## YoutubeDiscordBot
