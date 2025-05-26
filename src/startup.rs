@@ -9,6 +9,7 @@ use serenity::all::{
     ChannelId, Context, EventHandler, GatewayIntents, Message, MessageBuilder, Ready,
 };
 use serenity::{async_trait, Client};
+use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
@@ -19,6 +20,12 @@ pub struct Handler;
 pub struct YoutubeDiscordBotSettings {
     pub api: String,
     pub channel: String,
+}
+
+lazy_static! {
+    pub static ref API: String = {
+        return std::env::var("Y_API").expect("failed to read Y_API env");
+    };
 }
 lazy_static! {
     pub static ref CONFIG: YoutubeDiscordBotSettings = {

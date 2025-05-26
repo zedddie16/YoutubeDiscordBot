@@ -1,11 +1,13 @@
+use crate::base::check_for_new_video;
 use crate::base::fetch;
+use crate::base::fetch::fetch_latest_video_id;
 use log::{error, info, trace};
 use std::error::Error;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
 
-pub async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>> {
+pub async fn is_new_video_uploaded(yt_channel_id: &str) -> Result<String, Box<dyn Error>> {
     //initializing an old id var
     let mut old_id = String::new();
     //does open vid.txt file and reads its content to old_id
@@ -19,7 +21,7 @@ pub async fn is_new_video_uploaded() -> Result<String, Box<dyn Error>> {
         }
     }
     //creates id variable containing videoId of last video of channel
-    let id = fetch::fetch_latest_video_id().await?;
+    let id = fetch_latest_video_id(yt_channel_id).await?;
     info!("fetched id is {}", id);
     //compares old and new id
     if old_id != id {

@@ -1,4 +1,4 @@
-use crate::startup::YouTubeDiscordBotSettings;
+use crate::startup::YoutubeDiscordBotSettings;
 use log::info;
 use serde_json::Value;
 use serde_yaml::from_str;
@@ -6,9 +6,7 @@ use std::error::Error;
 
 // #fetch last user's YouTube video
 
-pub async fn fetch_latest_video_id(
-    youtube: &YouTubeDiscordBotSettings,
-) -> Result<String, Box<dyn Error>> {
+pub async fn fetch_latest_video_id(yt_channel_id: &str) -> Result<String, Box<dyn Error>> {
     //loading keys from Config
     //let youtube_key = use_config()?.get::<String>("youtube_key")?;
     //channel = use_config()?.get::<String>("youtube_channel")?;
@@ -20,8 +18,8 @@ pub async fn fetch_latest_video_id(
     /*Url takes CHANNEL and YOUTUBE_KEY, and does a request to YouTube API where part = snippet, channelId is CHANNEL_ID
     it does order videos of CHANNEL_ID YouTube channel by date and as Results 1 it shows LAST video of YouTube channel*/
     let url = format!("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={}&order=date&maxResults=1&key={}"
-        ,youtube.channel
-        ,youtube.youtube_key
+        ,yt_channel_id
+        ,youtube.api
         );
 
     //does request to a YouTube API
