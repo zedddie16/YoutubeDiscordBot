@@ -1,3 +1,9 @@
+as currently at refactor branch i want to:
+[ ] - implement multiple youtube channels
+[ ] - integrate duckdb
+[ ] - fix my garbage code
+
+
 ## YoutubeDiscordBot
 A Rust-based Discord bot that automatically posts new YouTube videos to a specified Discord channel.
 
