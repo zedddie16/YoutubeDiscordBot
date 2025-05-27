@@ -11,6 +11,7 @@ pub async fn is_new_video_uploaded(yt_channel_id: &str) -> Result<String, Box<dy
     //initializing an old id var
     let mut old_id = String::new();
     //does open vid.txt file and reads its content to old_id
+    //TODO: db
     match File::open("vid_id.txt") {
         Ok(mut file) => {
             file.read_to_string(&mut old_id).unwrap();

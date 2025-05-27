@@ -9,7 +9,6 @@ use serenity::all::{
     ChannelId, Context, EventHandler, GatewayIntents, Message, MessageBuilder, Ready,
 };
 use serenity::{async_trait, Client};
-use std::env;
 use std::fs;
 use std::fs::File;
 use std::io::Read;
@@ -31,7 +30,8 @@ lazy_static! {
     pub static ref CONFIG: YoutubeDiscordBotSettings = {
         let config_data = fs::read_to_string("config.yaml").expect("Failed to read config.yaml");
         serde_yaml::from_str(&config_data).expect("Failed to parse config data");
-        todo!("Dodelai")
+        todo!("Dodelai");
+        todo!("Mne shash len eto delat ia hochu spat.. :c")
     };
 }
 
