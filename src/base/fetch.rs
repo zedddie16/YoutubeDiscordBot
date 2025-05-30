@@ -6,7 +6,10 @@ use std::error::Error;
 
 // #fetch last user's YouTube video
 
-pub async fn fetch_latest_video_id(yt_channel_id: &str) -> Result<String, Box<dyn Error>> {
+pub async fn fetch_latest_video_id(
+    yt_channel_id: &str,
+    api: String,
+) -> Result<String, Box<dyn Error>> {
     //loading keys from Config
     //let youtube_key = use_config()?.get::<String>("youtube_key")?;
     //channel = use_config()?.get::<String>("youtube_channel")?;
@@ -19,7 +22,7 @@ pub async fn fetch_latest_video_id(yt_channel_id: &str) -> Result<String, Box<dy
     it does order videos of CHANNEL_ID YouTube channel by date and as Results 1 it shows LAST video of YouTube channel*/
     let url = format!("https://www.googleapis.com/youtube/v3/search?part=snippet&channelId={}&order=date&maxResults=1&key={}"
         ,yt_channel_id
-        ,youtube.api
+        ,api
         );
 
     //does request to a YouTube API

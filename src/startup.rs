@@ -1,4 +1,4 @@
-use crate::base::{check_for_new_video, fetch, use_config};
+use crate::base::{check_for_new_video::check_for_new_video, fetch, use_config};
 use config::{Config, ConfigError};
 use env_logger::{Builder, Target};
 use lazy_static::lazy_static;
@@ -20,20 +20,26 @@ pub struct YoutubeDiscordBotSettings {
     pub api: String,
     pub channel: String,
 }
-
+// discord api key
 lazy_static! {
-    pub static ref API: String = {
+    pub static ref D_API: String = {
+        return std::env::var("D_API").expect("failed to read D_API env");
+    };
+}
+// youtube(google) api key
+lazy_static! {
+    pub static ref Y_API: String = {
         return std::env::var("Y_API").expect("failed to read Y_API env");
     };
 }
-lazy_static! {
-    pub static ref CONFIG: YoutubeDiscordBotSettings = {
-        let config_data = fs::read_to_string("config.yaml").expect("Failed to read config.yaml");
-        serde_yaml::from_str(&config_data).expect("Failed to parse config data");
-        todo!("Dodelai");
-        todo!("Mne shash len eto delat ia hochu spat.. :c")
-    };
-}
+// lazy_static! {
+//     pub static ref CONFIG: YoutubeDiscordBotSettings = {
+//         let config_data = fs::read_to_string("config.yaml").expect("Failed to read config.yaml");
+//         serde_yaml::from_str(&config_data).expect("Failed to parse config data");
+//         todo!("Dodelai");
+//         todo!("Mne shash len eto delat ia hochu spat.. :c")
+//     };
+// }
 
 #[async_trait]
 impl EventHandler for Handler {
@@ -133,7 +139,7 @@ impl EventHandler for Handler {
 
         let _message_content = "test message";
 
-        check_for_new_video::check_for_new_video(ctx, channel_id)
+        check_for_new_video(ctx, channel_id)
             .await
             .expect("failed to start check_for_new_video");
     }
@@ -141,8 +147,7 @@ impl EventHandler for Handler {
 //run the bot
 pub async fn run() -> Result<(), ConfigError> {
     //takes token from Config
-    let token = use_config::use_config()?.get::<String>("token")?;
-
+    let token = std::env::var("D_API");
     let intents = GatewayIntents::GUILD_MESSAGES
         | GatewayIntents::DIRECT_MESSAGES
         | GatewayIntents::MESSAGE_CONTENT;

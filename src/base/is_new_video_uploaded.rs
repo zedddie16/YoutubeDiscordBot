@@ -5,7 +5,10 @@ use std::fs;
 use std::fs::File;
 use std::io::Read;
 
-pub async fn is_new_video_uploaded(yt_channel_id: &str) -> Result<String, Box<dyn Error>> {
+pub async fn is_new_video_uploaded(
+    yt_channel_id: &str,
+    api: &str,
+) -> Result<String, Box<dyn Error>> {
     //initializing an old id var
     let mut old_id = String::new();
     //does open vid.txt file and reads its content to old_id
