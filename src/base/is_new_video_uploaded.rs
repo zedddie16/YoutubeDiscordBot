@@ -1,5 +1,3 @@
-use crate::base::check_for_new_video;
-use crate::base::fetch;
 use crate::base::fetch::fetch_latest_video_id;
 use log::{error, info, trace};
 use std::error::Error;
